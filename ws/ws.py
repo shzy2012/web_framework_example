@@ -60,7 +60,7 @@ class WebServer:
 class HttpHandle:
     def __init__(self,connection,client_address,routes,enableCORS):
         # 回话
-        self.conn = connection
+        self.session = connection
         self.client_address = client_address
         # 路由
         self.routes = routes
@@ -191,10 +191,10 @@ class HttpHandle:
             
         print('---------send data to client------------')
         print(data)
-        self.conn.sendall(data)
+        self.session.sendall(data)
         #data=bytes("hello", 'utf-8')
         # 关闭连接
-        self.conn.close()
+        self.session.close()
 
 # app
 if __name__ == '__main__':
