@@ -21,6 +21,8 @@ web框架一般都提供工具和库来实现简单、常见的开发任务, 包
 6.网络安全与数据加密
 ```
 
+<img src="https://raw.githubusercontent.com/shzy2012/static/master/web_framework_http_process.png" width="800" height="500">
+
 example 
 ```python
 #!/usr/bin/python

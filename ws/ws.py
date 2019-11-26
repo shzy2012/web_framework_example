@@ -66,7 +66,6 @@ class HttpHandle:
         self.routes = routes
         # 请求、响应
         self.request = {}
-        self.response = {}
         # 存储request data
         self.request_data = b''
         # 存储response data
@@ -79,9 +78,7 @@ class HttpHandle:
 
      # 处理接受事件
     def conn_hanler(self,connection):
-        # 打印收到的客户端请求
         self.read_hanler(connection)
-
 
     # 读取传入的请求数据
     def read_hanler(self,connection):
