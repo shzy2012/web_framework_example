@@ -8,3 +8,6 @@
 """
 
 __version__ = "1.1.2.dev"
+
+from . import ws
+from . import view

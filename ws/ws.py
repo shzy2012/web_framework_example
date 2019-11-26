@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-    microframework.app
+    ws.app
 """
 
-__name__ = "microframework.app"
 import socket
 import sys
 import collections
 import os
 import json
+from  . import view
 
 # 创建服务器
 class WebServer:
@@ -192,17 +192,3 @@ class HttpHandle:
         #data=bytes("hello", 'utf-8')
         # 关闭连接
         self.session.close()
-
-# app
-if __name__ == '__main__':
-    pass
-else:
-    # 创建ws
-    app = WebServer()
-    app.EnableCORS()
-    # 定义路由
-    @app.route("/")
-    def hello(request):
-        return "i am working"
-    # 开启监听
-    app.Listen(8001)
