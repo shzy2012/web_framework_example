@@ -15,6 +15,7 @@ class WebServer:
     # 开启服务端监听
     def __init__(self,):
         self.routes={}
+        self.enableCORS=False
 
     def Listen(self,port):
          # 1.创建 TCP/IP socket
@@ -28,7 +29,7 @@ class WebServer:
          # 4.循环等待客户端连接
         while True:
             connection,client_address = sock.accept()
-            HttpHandle(connection,client_address,self.routes)  
+            HttpHandle(connection,client_address,self.routes,self.enableCORS)  
     # 路由处理  
     def route(self,path=None):
         def wrapper(func):
@@ -37,17 +38,27 @@ class WebServer:
         return wrapper
     
     # 跨域
-    def CORS(self):
-        pass
+    def EnableCORS(self):
+        self.enableCORS=True
     
     # database 访问层
     def DB(self):
-        pass
-
+        # 打开数据库
+        def open(self):
+            pass
+        # 连接数据库
+        def connect(self):
+            pass
+        # 执行SQL
+        def execute(self,sql):
+            pass
+            # 获取数据
+            def fetch():
+                pass
 
 # 处理客户端
 class HttpHandle:
-    def __init__(self,connection,client_address,routes):
+    def __init__(self,connection,client_address,routes,enableCORS):
         # 回话
         self.conn = connection
         self.client_address = client_address
@@ -60,6 +71,8 @@ class HttpHandle:
         self.request_data = b''
         # 存储response data
         self.write_queue = collections.deque()
+        # 跨域
+        self.enableCORS=enableCORS
         # 处理请求
         self.conn_hanler(connection)
  
@@ -86,15 +99,33 @@ class HttpHandle:
         header_data = self.request_data[:self.request_data.find(b'\r\n\r\n')]
         header_text = header_data.decode('utf-8')
         header_lines = header_text.splitlines()
-        request = header_lines[0].split()
+        request = header_lines.pop(0).split()
         op = request[0]
         url = request[1]
-        self.request = {'op':op,'url':url,'data':None}
+        dic = {'op':op,'url':url}
 
+        for x in header_lines:
+            keys = x.split()
+            key = keys[0].replace(':','') #删除 "Host:"中的":"
+            if key=="Host":
+                values = keys[1].split(':')
+                dic[key]=values[0]
+                dic["Port"]=values[1]
+            else:
+                dic[key]=keys[1]
+
+        self.request = dic
         print('---------receive data from client{}----------'.format(self.client_address))
         print(header_text)
-        self.process_request(op,url)
 
+        # 处理CORS
+        if(self.enableCORS):
+            if not (('Host' in dic) & (dic['Host'] == 'localhost')):
+                self.send_error(403,'No Access-Control-Allow-Origin header is present on the requested resource')
+                self.handle_write()
+                return
+        
+        self.process_request(op,url)
 
     # 处理请求
     def process_request(self,op,url):
@@ -155,11 +186,8 @@ class HttpHandle:
     def handle_write(self):
         # 服务端响应数据给请求的客户端
         data = b''
-        if len(self.write_queue)>0:
-            while True:
-                if len(self.write_queue)<=0:
-                    break
-                data += self.write_queue.popleft()
+        while len(self.write_queue)>0:
+            data += self.write_queue.popleft()
             
         print('---------send data to client------------')
         print(data)
@@ -174,9 +202,10 @@ if __name__ == '__main__':
 else:
     # 创建ws
     app = WebServer()
+    app.EnableCORS()
     # 定义路由
     @app.route("/")
     def hello(request):
         return "i am working"
     # 开启监听
-    app.Listen(8000)
+    app.Listen(8001)

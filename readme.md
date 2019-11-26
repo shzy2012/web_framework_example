@@ -20,3 +20,22 @@ web框架一般都提供工具和库来实现简单、常见的开发任务, 包
 5.渲染数据
 6.网络安全与数据加密
 ```
+
+example 
+```python
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import ws.ws
+
+
+# 创建ws
+app = ws.WebServer()
+app.EnableCORS()
+# 定义路由
+@app.route("/")
+def hello(request):
+    return "i am working"
+# 开启监听
+app.Listen(8001)
+```
