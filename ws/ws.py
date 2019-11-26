@@ -98,6 +98,8 @@ class HttpHandle:
 
     # 处理请求
     def process_request(self,op,url):
+
+        # 解析不同的请求方法
         if op =="GET":
             if url in self.routes.keys():
                 f = self.routes[url]
@@ -134,7 +136,7 @@ class HttpHandle:
 
     # 错误处理
     def send_error(self,code,message):
-        self.push_text('HTTP/1.0 %s %sOK\r\n' %(code,'Not Found'))
+        self.push_text('HTTP/1. %s %sOK\r\n' %(code,'Not Found'))
         self.push_text('Content-Type: text/plain\r\n')
         self.push_text('Content-Length: %d\r\n' % len(message))
         self.push_text('Connection: Closed\r\n')
@@ -143,8 +145,7 @@ class HttpHandle:
 
     # 将文本数据添加到输出队列
     def push_text(self,text):
-        #self.push(text.encode('utf-8'))
-        self.push(bytes(text,'utf-8'))
+        self.push(text.encode('utf-8'))
 
     # 将二进制数据添加到输出队列
     def push(self,data):
@@ -164,18 +165,18 @@ class HttpHandle:
         print(data)
         self.conn.sendall(data)
         #data=bytes("hello", 'utf-8')
-        #print(data)
-        #self.conn.sendall(data)
         # 关闭连接
         self.conn.close()
 
-# 创建ws
-app = WebServer()
-
-# 定义路由
-@app.route("/")
-def hello(request):
-    return "hello"
-
-# 开启监听
-app.Listen(8001)
+# app
+if __name__ == '__main__':
+    pass
+else:
+    # 创建ws
+    app = WebServer()
+    # 定义路由
+    @app.route("/")
+    def hello(request):
+        return "i am working"
+    # 开启监听
+    app.Listen(8000)
